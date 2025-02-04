@@ -1,0 +1,47 @@
+services:
+  postgres:
+    container_name: ms_pg
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: amihady
+      POSTGRES_PASSWORD: amihady
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: ms_pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 5050:80
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  mail-dev:
+    container_name: ms_mail_dev
+    image: maildev/maildev
+    ports:
+      - 1025:1025
+      - 1080:1080
+
+volumes:
+  postgres:
+  pgadmin:
+
+networks:
+  microservices:
+    driver: bridge
